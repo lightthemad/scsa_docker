@@ -1,0 +1,18 @@
+defaultEntryPoints = ["http", "https"]
+logLevel = "INFO"
+
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+    entryPoint = "https"
+
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+
+[docker]
+  domain = 'localhost'
+  endpoint = "unix:///var/run/docker.sock"
+  exposedByDefault = false

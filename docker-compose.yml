@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+
+  traefik:
+    container_name: "scsa.traefik"
+    image: traefik:v1.7
+    command: --api --docker --web
+    ports:
+      - '80:80'
+      - '8080:8080'
+    labels:
+      - traefik.port=8080 # web ui (enabled by --api)
+      - traefik.frontend.rule=Host:www.monitor.localhost
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+#      - ./traefik/traefik.toml:/etc/traefik/traefik.toml
+
+#  apache:
+#    image: httpd
+#    ports:
+#      - "80"
+#    volumes:
+#      - ./apache/index.html:/usr/local/apache2/htdocs/index.html
+
+  nginx:
+    container_name: "scsa.website"
+    image: nginx
+    labels:
+      - traefik.frontend.rule=Host:scsa.localhost
+      - traefik.backend=www.scsa.website
+    depends_on:
+      - "traefik"
+    expose:
+      - "80"
+    volumes:
+      - ./nginx/index.html:/usr/share/nginx/html/index.html
+
+
+ 
+
+ 

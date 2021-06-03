@@ -1,0 +1,6 @@
+We want a dockerised clean wordpress installation with the 
+1. phpmyadmin 
+2. mysql 
+3. reverse proxy
+in a different containers. We want a reverse proxy to reach
+the microservises by the domain names.
