@@ -16,30 +16,23 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   apache:
-    container_name: "scsa.test"
-    image: httpd
+    container_name: "scsa.wp"
+    image: wodby/php-apache
     labels:
-      - traefik.frontend.rule=Host:test.localhost
-      - traefik.backend=scsa.test
+      - traefik.frontend.rule=Host:wp.localhost
+      - traefik.backend=scsa.wp
     depends_on:
       - "traefik"
     ports:
       - "80"
+    environment:
+      APACHE_BACKEND_HOST: php
+      APACHE_BACKEND_PORT: 9000
+      APACHE_DIRECTORY_INDEX: index.php
+      APACHE_SERVER_NAME: wp.localhost
+      APACHE_SERVER_ROOT: /var/www/wordpress
     volumes:
-      - ./apache/index.html:/usr/local/apache2/htdocs/index.html
-
-  nginx:
-    container_name: "scsa.website"
-    image: nginx
-    labels:
-      - traefik.frontend.rule=Host:scsa.localhost
-      - traefik.backend=scsa.website
-    depends_on:
-      - "traefik"
-    expose:
-      - "80"
-    volumes:
-      - ./nginx/index.html:/usr/share/nginx/html/index.html
+      - ./wordpress:/var/www/wordpress
 
   mysql:
     container_name: "scsa.mysql"
