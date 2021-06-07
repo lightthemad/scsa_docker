@@ -11,24 +11,29 @@ services:
       - '8080:8080'
     labels:
       - traefik.port=8080 # web ui (enabled by --api)
-      - traefik.frontend.rule=Host:www.monitor.localhost
+      - traefik.frontend.rule=Host:monitor.localhost
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-#      - ./traefik/traefik.toml:/etc/traefik/traefik.toml
 
-#  apache:
-#    image: httpd
-#    ports:
-#      - "80"
-#    volumes:
-#      - ./apache/index.html:/usr/local/apache2/htdocs/index.html
+  apache:
+    container_name: "scsa.test"
+    image: httpd
+    labels:
+      - traefik.frontend.rule=Host:test.localhost
+      - traefik.backend=scsa.test
+    depends_on:
+      - "traefik"
+    ports:
+      - "80"
+    volumes:
+      - ./apache/index.html:/usr/local/apache2/htdocs/index.html
 
   nginx:
     container_name: "scsa.website"
     image: nginx
     labels:
       - traefik.frontend.rule=Host:scsa.localhost
-      - traefik.backend=www.scsa.website
+      - traefik.backend=scsa.website
     depends_on:
       - "traefik"
     expose:
@@ -36,7 +41,27 @@ services:
     volumes:
       - ./nginx/index.html:/usr/share/nginx/html/index.html
 
+  mysql:
+    container_name: "scsa.mysql"
+    image: wodby/mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: scsa
+      MYSQL_PASSWORD: scsa
+      MYSQL_DATABASE: scsa
 
+  phpmyadmin:
+    container_name: "scsa.phpmyadmin"
+    image: "phpmyadmin/phpmyadmin"
+    labels:
+      - traefik.frontend.rule=Host:pma.localhost
+    depends_on:
+      - "traefik"
+      - "mysql"
+    environment:
+      PMA_HOST: "mysql"
+    expose:
+      - "80"
  
 
  
