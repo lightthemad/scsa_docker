@@ -11,14 +11,14 @@ services:
       - '8080:8080'
     labels:
       - traefik.port=8080 # web ui (enabled by --api)
-      - traefik.frontend.rule=Host:monitor.localhost
+      - traefik.frontend.rule=Host:monitor.local
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
   nginx:
     image: wodby/nginx
     labels:
-      - traefik.frontend.rule=Host:wp.localhost
+      - traefik.frontend.rule=Host:wp.local
       - traefik.backend=scsa.wp
     container_name: "scsa.nginx"
     depends_on:
@@ -55,7 +55,7 @@ services:
     container_name: "scsa.phpmyadmin"
     image: "phpmyadmin/phpmyadmin"
     labels:
-      - traefik.frontend.rule=Host:pma.localhost
+      - traefik.frontend.rule=Host:pma.local
     depends_on:
       - "traefik"
       - "mysql"
